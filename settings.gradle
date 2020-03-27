@@ -1,2 +1,3 @@
 rootProject.name='ORCodeDemo'
 include ':app'
+include ':orcodelib'
