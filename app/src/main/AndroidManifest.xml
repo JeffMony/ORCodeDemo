@@ -9,13 +9,40 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="fullSensor">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.jeffmony.orcode.CaptureActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/CaptureTheme"/>
+
+        <activity
+            android:name=".EasyCaptureActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/CaptureTheme"/>
+        <activity
+            android:name=".CustomCaptureActivity"
+            android:theme="@style/CaptureTheme"/>
+
+        <activity
+            android:name=".CaptureFragmentActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/CaptureTheme"/>
+
+        <activity
+            android:name=".CustomActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/CaptureTheme"/>
+
+        <activity
+            android:name=".CodeActivity"
+            android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>
