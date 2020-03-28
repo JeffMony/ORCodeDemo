@@ -184,11 +184,15 @@ public class CaptureHelper implements CaptureLifecycle,CaptureTouchEvent, Captur
         mHasCameraFlash = mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
         initCameraManager();
 
-        mOnCaptureListener = (result, barcode, scaleFactor) -> {
-            mInactivityTimer.onActivity();
-            mBeepManager.playBeepSoundAndVibrate();
-            onResult(result,barcode,scaleFactor);
+        mOnCaptureListener = new OnCaptureListener() {
+            @Override
+            public void onHandleDecode(Result result, Bitmap barcode, float scaleFactor) {
+                mInactivityTimer.onActivity();
+                mBeepManager.playBeepSoundAndVibrate();
+                onResult(result,barcode,scaleFactor);
+            }
         };
+
         //设置是否播放音效和震动
         mBeepManager.setPlayBeep(mIsPlayBeep);
         mBeepManager.setVibrate(mIsVibrate);
@@ -279,24 +283,35 @@ public class CaptureHelper implements CaptureLifecycle,CaptureTouchEvent, Captur
         mCameraManager.setFramingRectVerticalOffset(mFramingRectVerticalOffset);
         mCameraManager.setFramingRectHorizontalOffset(mFramingRectHorizontalOffset);
         if(mIvTorch !=null && mHasCameraFlash){
-            mIvTorch.setOnClickListener(v -> {
-                if(mCameraManager!=null){
-                    mCameraManager.setTorch(!mIvTorch.isSelected());
-                }
-            });
-            mCameraManager.setOnSensorListener((torch, tooDark, ambientLightLux) -> {
-                if(tooDark){
-                    if(mIvTorch.getVisibility() != View.VISIBLE){
-                        mIvTorch.setVisibility(View.VISIBLE);
-                    }
-                }else if(!torch){
-                    if(mIvTorch.getVisibility() == View.VISIBLE){
-                        mIvTorch.setVisibility(View.INVISIBLE);
+            mIvTorch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mCameraManager!=null){
+                        mCameraManager.setTorch(!mIvTorch.isSelected());
                     }
                 }
             });
-            mCameraManager.setOnTorchListener(torch -> mIvTorch.setSelected(torch));
+            mCameraManager.setOnSensorListener(new CameraManager.OnSensorListener() {
+                @Override
+                public void onSensorChanged(boolean torch, boolean tooDark, float ambientLightLux) {
+                    if(tooDark){
+                        if(mIvTorch.getVisibility() != View.VISIBLE){
+                            mIvTorch.setVisibility(View.VISIBLE);
+                        }
+                    }else if(!torch){
+                        if(mIvTorch.getVisibility() == View.VISIBLE){
+                            mIvTorch.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                }
+            });
 
+            mCameraManager.setOnTorchListener(new CameraManager.OnTorchListener() {
+                @Override
+                public void onTorchChanged(boolean torch) {
+                    mIvTorch.setSelected(torch);
+                }
+            });
         }
     }
 
@@ -404,10 +419,13 @@ public class CaptureHelper implements CaptureLifecycle,CaptureTouchEvent, Captur
         params.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
         camera.setParameters(params);
 
-        camera.autoFocus((success, camera1) -> {
-            Camera.Parameters params1 = camera1.getParameters();
-            params1.setFocusMode(currentFocusMode);
-            camera1.setParameters(params1);
+        camera.autoFocus(new Camera.AutoFocusCallback() {
+            @Override
+            public void onAutoFocus(boolean success, Camera camera1) {
+                Camera.Parameters params1 = camera1.getParameters();
+                params1.setFocusMode(currentFocusMode);
+                camera1.setParameters(params1);
+            }
         });
 
     }
@@ -501,16 +519,20 @@ public class CaptureHelper implements CaptureLifecycle,CaptureTouchEvent, Captur
         }
 
         if(mIsPlayBeep){//如果播放音效，则稍微延迟一点，给予播放音效时间
-            mCaptureHandler.postDelayed(() -> {
-                //如果设置了回调，并且onCallback返回为true，则表示拦截
-                if(mOnCaptureCallback!=null && mOnCaptureCallback.onResultCallback(text)){
-                    return;
+
+            mCaptureHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //如果设置了回调，并且onCallback返回为true，则表示拦截
+                    if(mOnCaptureCallback!=null && mOnCaptureCallback.onResultCallback(text)){
+                        return;
+                    }
+                    Intent intent = new Intent();
+                    intent.putExtra(Intents.Scan.RESULT,text);
+                    mActivity.setResult(Activity.RESULT_OK,intent);
+                    mActivity.finish();
                 }
-                Intent intent = new Intent();
-                intent.putExtra(Intents.Scan.RESULT,text);
-                mActivity.setResult(Activity.RESULT_OK,intent);
-                mActivity.finish();
-            },100);
+            }, 100);
             return;
         }
 
