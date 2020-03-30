@@ -37,7 +37,6 @@ import android.view.View;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.google.zxing.ResultPoint;
 
@@ -250,14 +249,14 @@ public final class ViewfinderView extends View {
     private void init(Context context, AttributeSet attrs) {
         //初始化自定义属性信息
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.ViewfinderView);
-        maskColor = array.getColor(R.styleable.ViewfinderView_maskColor, ContextCompat.getColor(context,R.color.viewfinder_mask));
-        frameColor = array.getColor(R.styleable.ViewfinderView_frameColor, ContextCompat.getColor(context,R.color.viewfinder_frame));
-        cornerColor = array.getColor(R.styleable.ViewfinderView_cornerColor, ContextCompat.getColor(context,R.color.viewfinder_corner));
-        laserColor = array.getColor(R.styleable.ViewfinderView_laserColor, ContextCompat.getColor(context,R.color.viewfinder_laser));
-        resultPointColor = array.getColor(R.styleable.ViewfinderView_resultPointColor, ContextCompat.getColor(context,R.color.viewfinder_result_point_color));
+        maskColor = array.getColor(R.styleable.ViewfinderView_maskColor, this.getResources().getColor(R.color.viewfinder_mask));
+        frameColor = array.getColor(R.styleable.ViewfinderView_frameColor, this.getResources().getColor(R.color.viewfinder_frame));
+        cornerColor = array.getColor(R.styleable.ViewfinderView_cornerColor, this.getResources().getColor(R.color.viewfinder_corner));
+        laserColor = array.getColor(R.styleable.ViewfinderView_laserColor, this.getResources().getColor(R.color.viewfinder_laser));
+        resultPointColor = array.getColor(R.styleable.ViewfinderView_resultPointColor, this.getResources().getColor(R.color.viewfinder_result_point_color));
 
         labelText = array.getString(R.styleable.ViewfinderView_labelText);
-        labelTextColor = array.getColor(R.styleable.ViewfinderView_labelTextColor, ContextCompat.getColor(context,R.color.viewfinder_text_color));
+        labelTextColor = array.getColor(R.styleable.ViewfinderView_labelTextColor, this.getResources().getColor(R.color.viewfinder_text_color));
         labelTextSize = array.getDimension(R.styleable.ViewfinderView_labelTextSize, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,14f,getResources().getDisplayMetrics()));
         labelTextPadding = array.getDimension(R.styleable.ViewfinderView_labelTextPadding, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,24,getResources().getDisplayMetrics()));
         labelTextLocation = TextLocation.getFromInt(array.getInt(R.styleable.ViewfinderView_labelTextLocation,0));
@@ -314,7 +313,7 @@ public final class ViewfinderView extends View {
     }
 
     public void setLabelTextColorResource(@ColorRes int id){
-        this.labelTextColor = ContextCompat.getColor(getContext(),id);
+        this.labelTextColor = this.getResources().getColor(id);
     }
 
     public void setLabelTextSize(float textSize) {
