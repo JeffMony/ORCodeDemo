@@ -1,5 +1,6 @@
 package com.jeffmony.orcode;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -7,11 +8,10 @@ import android.view.View;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.jeffmony.orcode.camera.CameraManager;
 
-public class CaptureActivity extends AppCompatActivity implements OnCaptureCallback{
+public class CaptureActivity extends Activity implements OnCaptureCallback{
 
     public static final String KEY_RESULT = Intents.Scan.RESULT;
 

@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     @AfterPermissionGranted(RC_READ_PHOTO)
-    private void checkExternalStoragePermissions(){
+    private void checkExternalStoragePermissions() {
         String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (EasyPermissions.hasPermissions(this, perms)) {//有权限
             startPhotoCode();
